@@ -1,0 +1,23 @@
+apply plugin: 'idea'
+//and standard one
+apply plugin: 'java'
+group 'edu.iastate.research'
+version '1.0-SNAPSHOT'
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.5'
+  distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'log4j', name: 'log4j', version: '1.2.16'
+}
