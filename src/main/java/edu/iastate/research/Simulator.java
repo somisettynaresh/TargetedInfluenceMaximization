@@ -3,15 +3,15 @@ package edu.iastate.research;
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.Vertex;
 import edu.iastate.research.graph.utilities.FileDataReader;
+import edu.iastate.research.influence.maximization.algorithms.*;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.logging.FileHandler;
-import java.util.logging.SimpleFormatter;
 
 /**
  * Created by Naresh on 10/28/2016.
@@ -30,7 +30,7 @@ public class Simulator {
         int budget = sc.nextInt();
         System.out.println("Enter non target threshold");
         int nonTargetThreshold = sc.nextInt();
-        setupLogger(filename + "_" + probability +"_" + percent + "_" + budget+ "_"+ nonTargetThreshold + ".log");
+        setupLogger(filename + "_" + probability +"_" + percent + "_" + budget+ "_"+ nonTargetThreshold + "_"+ System.currentTimeMillis()+ ".log");
         wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold);
     }
 
@@ -60,6 +60,15 @@ public class Simulator {
         DirectedGraph graphWith90PerA = generateGraph(wikiVoteDataReader, ((float) percent) / 100);
         logger.info("***************** Simulating with" + percent + "% A graph ****************");
         printGraphStats(graphWith90PerA, targetLabels, nonTargetLabels);
+
+/*
+        Greedy greedy = new GreedyWithMultiThreading();
+        Set<Integer> seedSet = greedy.findSeedSet(graphWith90PerA,budget,targetLabels,10000);
+        logger.info("Influence spread : " + greedy.influenceSpread(graphWith90PerA,seedSet,targetLabels, 10000));
+*/
+
+        EstimateNonTargets edag = new EstimateNonTargetsUsingRandomDAG();
+        edag.estimate(graphWith90PerA,nonTargetLabels,10000);
     }
 
     private static void printGraphStats(DirectedGraph graph, Set<String> targetLabels, Set<String> nonTargetLabels) {

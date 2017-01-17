@@ -23,8 +23,8 @@ public class FileDataReader implements DataReader {
         DirectedGraph graph = new DirectedGraph();
         BufferedReader bufferedReader = null;
         try {
-            URL url = getClass().getClassLoader().getResource("data/" +this.filename);
-            bufferedReader = new BufferedReader(new FileReader(url.getPath()));
+            InputStream in = getClass().getClassLoader().getResourceAsStream("data/" +this.filename);
+            bufferedReader = new BufferedReader(new InputStreamReader(in));
             String sCurrentLine;
             while ((sCurrentLine = bufferedReader.readLine()) != null) {
                 String[] inputLine = sCurrentLine.split("\t", 2);

@@ -177,4 +177,13 @@ public class Vertex implements Serializable{
         this.inBoundNeighbours.remove(fromVertex);
         indDegree--;
     }
+
+    public boolean hasLabel(Set<String> targetLabels) {
+        for (String targetLabel : targetLabels) {
+            if (this.getProperties().get("label").equals(targetLabel)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
