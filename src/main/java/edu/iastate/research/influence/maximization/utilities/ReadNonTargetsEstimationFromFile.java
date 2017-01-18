@@ -2,10 +2,7 @@ package edu.iastate.research.influence.maximization.utilities;
 
 import org.apache.log4j.Logger;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,9 +15,9 @@ public class ReadNonTargetsEstimationFromFile {
     final static Logger logger = Logger.getLogger(ReadNonTargetsEstimationFromFile.class);
 
     public Map<Integer, Set<Integer>> read(String filename) {
-        FileInputStream fin = null;
+        InputStream fin = null;
         try {
-            fin = new FileInputStream(filename);
+            fin = ReadNonTargetsEstimationFromFile.class.getClassLoader().getResourceAsStream(filename);
             ObjectInputStream ois = new ObjectInputStream(fin);
             Map<Integer, Integer> nonTargetMap = (Map<Integer, Integer>) ois.readObject();
             Map<Integer, Set<Integer>> mapByNonTargetsCount = new HashMap<>();

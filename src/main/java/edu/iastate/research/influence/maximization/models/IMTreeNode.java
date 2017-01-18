@@ -46,10 +46,11 @@ public class IMTreeNode implements Serializable{
     }
 
 
-    public IMTreeNode(InfluentialNode maxInfluentialNode) {
+    public IMTreeNode(NodeWithInfluence maxInfluentialNode, int nonTargetsActivated, IMTreeNode parent) {
         this.node = maxInfluentialNode.getNode();
-        this.activeNonTargets = maxInfluentialNode.getNonTargetActivated();
-        this.activeTargets = maxInfluentialNode.getTargetActivated();
+        this.activeNonTargets = nonTargetsActivated;
+        this.activeTargets = ((Double)maxInfluentialNode.getInfluence()).intValue();
+        this.parent = parent;
     }
 
     /**

@@ -5,6 +5,10 @@
 .idea/workspace.xml
 .idea/tasks.xml
 logs/
+build/
+.idea/artifacts/
+.gradle/
+.idea/
 # Sensitive or high-churn files:
 .idea/dataSources/
 .idea/dataSources.ids

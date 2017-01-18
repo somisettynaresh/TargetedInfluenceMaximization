@@ -18,7 +18,7 @@ public class Greedy {
         Set<Integer> seedSet = new HashSet<>();
         Set<Integer> active = new HashSet<>();
         for (int i = 0; i < budget; i++) {
-            logger.info("Finding" + i +  " seed vertex");
+            logger.info("Finding" + i + " seed vertex");
             Integer maxInfluentialNode = findMaxInfluentialNode(seedSet, graph, targetLabels, noOfSimulations, active);
             seedSet.add(maxInfluentialNode);
         }
@@ -29,13 +29,13 @@ public class Greedy {
         int maxInfluentialNode = Integer.MIN_VALUE;
         double maxMarginalInfluenceSpread = Integer.MIN_VALUE;
         Set<Integer> maxActivatedSet = new HashSet<>();
-        Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph,seedSet,noOfSimulations,active);
-        double currentSpread = calculateInfluenceSpread(graph,targetLabels,activatedSet);
+        Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, noOfSimulations, active);
+        double currentSpread = calculateInfluenceSpread(graph, targetLabels, activatedSet);
         for (Vertex vertex : graph.getVertices()) {
-            if(!seedSet.contains(vertex.getId())){
+            if (!seedSet.contains(vertex.getId())) {
                 seedSet.add(vertex.getId());
-                Set<Integer> currentActivatedSet = IndependentCascadeModel.performDiffusion(graph,seedSet,noOfSimulations,activatedSet);
-                double marginalInfluenceSpread = calculateInfluenceSpread(graph,targetLabels,currentActivatedSet) - currentSpread;
+                Set<Integer> currentActivatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, noOfSimulations, activatedSet);
+                double marginalInfluenceSpread = calculateInfluenceSpread(graph, targetLabels, currentActivatedSet) - currentSpread;
                 logger.debug("Performing diffusion for vertex " + vertex.getId() + " influence spread : " + marginalInfluenceSpread);
                 if (maxMarginalInfluenceSpread < marginalInfluenceSpread) {
                     maxInfluentialNode = vertex.getId();
@@ -55,7 +55,7 @@ public class Greedy {
         return calculateInfluenceSpread(graph, targetLabels, activeSet);
     }
 
-   public double calculateInfluenceSpread(DirectedGraph graph, Set<String> targetLabels, Set<Integer> activeSet) {
+    public double calculateInfluenceSpread(DirectedGraph graph, Set<String> targetLabels, Set<Integer> activeSet) {
         double spread = 0;
         for (Integer vertex : activeSet) {
             if (graph.find(vertex).hasLabel(targetLabels)) {

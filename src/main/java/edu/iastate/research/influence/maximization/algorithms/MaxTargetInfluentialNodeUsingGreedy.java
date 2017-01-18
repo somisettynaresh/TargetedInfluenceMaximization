@@ -24,17 +24,19 @@ public class MaxTargetInfluentialNodeUsingGreedy extends MaxTargetInfluentialNod
         Set<Integer> alreadyActivatedNodes = performDiffusion(graph, seedSet, noOfSimulations, new HashSet<>());
         int alreadyInfluencedSpread = countNonTargets(alreadyActivatedNodes, graph, targetLabels);
         for (Integer node : nodes) {
-            seedSet.add(node);
-            Set<Integer> currentlyActivatedNodes = performDiffusion(graph, seedSet, noOfSimulations, alreadyActivatedNodes);
-            int marginalInfluenceSpread = countNonTargets(currentlyActivatedNodes, graph, targetLabels) - alreadyInfluencedSpread;
-            logger.debug("Performed Diffusion for node " + node + " and influence is : " + marginalInfluenceSpread);
-            if(marginalInfluenceSpread > maxMarginalInfluenceSpread) {
-                maxMarginalInfluenceSpread =marginalInfluenceSpread;
-                maxInfluentialNode = node;
+            if (!seedSet.contains(node)) {
+                seedSet.add(node);
+                Set<Integer> currentlyActivatedNodes = performDiffusion(graph, seedSet, noOfSimulations, alreadyActivatedNodes);
+                int marginalInfluenceSpread = countNonTargets(currentlyActivatedNodes, graph, targetLabels) - alreadyInfluencedSpread;
+                logger.debug("Performed Diffusion for node " + node + " and influence is : " + marginalInfluenceSpread);
+                if (marginalInfluenceSpread > maxMarginalInfluenceSpread) {
+                    maxMarginalInfluenceSpread = marginalInfluenceSpread;
+                    maxInfluentialNode = node;
+                }
+                seedSet.remove(node);
             }
-            seedSet.remove(node);
         }
-        logger.info("Maximum influential Node is " + maxInfluentialNode + " and influence is " + maxMarginalInfluenceSpread);
+        logger.debug("Maximum influential Node is " + maxInfluentialNode + " and influence is " + maxMarginalInfluenceSpread);
         return new NodeWithInfluence(maxInfluentialNode, maxMarginalInfluenceSpread);
     }
 

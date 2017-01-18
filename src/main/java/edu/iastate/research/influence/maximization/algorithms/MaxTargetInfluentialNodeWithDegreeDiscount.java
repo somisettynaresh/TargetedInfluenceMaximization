@@ -18,15 +18,17 @@ public class MaxTargetInfluentialNodeWithDegreeDiscount extends MaxTargetInfluen
         double maxInfluenceSpread = Integer.MIN_VALUE;
         int maxInfluentialNode = Integer.MIN_VALUE;
         for (Integer node : nodes) {
-            double influenceSpread = DegreeDiscount.degreeHeuresticForNodeWithLabels(graph, seedSet, node, targetLabels);
-            logger.debug("Degree Discount heuristic for node " + node + " is : " + influenceSpread);
+            if (!seedSet.contains(node)) {
+                double influenceSpread = DegreeDiscount.degreeHeuresticForNodeWithLabels(graph, seedSet, node, targetLabels);
+                logger.debug("Degree Discount heuristic for node " + node + " is : " + influenceSpread);
 
-            if (influenceSpread > maxInfluenceSpread) {
-                maxInfluenceSpread = influenceSpread;
-                maxInfluentialNode = node;
+                if (influenceSpread > maxInfluenceSpread) {
+                    maxInfluenceSpread = influenceSpread;
+                    maxInfluentialNode = node;
+                }
             }
         }
-        logger.info("Maximum influential Node is " + maxInfluentialNode + " and influence is " + maxInfluenceSpread);
+        logger.debug("Maximum influential Node is " + maxInfluentialNode + " and influence is " + maxInfluenceSpread);
         return new NodeWithInfluence(maxInfluentialNode, maxInfluenceSpread);
     }
 }

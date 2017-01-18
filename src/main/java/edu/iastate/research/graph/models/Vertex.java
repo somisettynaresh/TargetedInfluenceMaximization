@@ -9,7 +9,7 @@ import java.util.Set;
 /**
  * Created by Naresh on 2/23/2016.
  */
-public class Vertex implements Serializable{
+public class Vertex implements Serializable {
 
     private int id;
     private int indDegree;
@@ -166,6 +166,10 @@ public class Vertex implements Serializable{
             this.properties = new HashMap<>();
             this.properties.put("label", label);
         }
+    }
+
+    public String getLabel() {
+        return this.properties.get("label");
     }
 
     public void removeOutBoundNeighbour(Vertex toVertex) {

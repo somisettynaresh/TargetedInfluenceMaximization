@@ -2,10 +2,7 @@ package edu.iastate.research.influence.maximization.utilities;
 
 import org.apache.log4j.Logger;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -15,13 +12,13 @@ public class NonTargetsDiff {
     final static Logger logger = Logger.getLogger(NonTargetsDiff.class);
 
     public void printDiff(String filename1, String filename2) {
-        FileInputStream fin = null;
+        InputStream fin = null;
         try {
-            fin = new FileInputStream(filename1);
+            fin = NonTargetsDiff.class.getClassLoader().getResourceAsStream(filename1);
             ObjectInputStream ois = new ObjectInputStream(fin);
             Map<Integer, Integer> nonTargetMap1 = (Map<Integer, Integer>) ois.readObject();
 
-            fin = new FileInputStream(filename2);
+            fin = NonTargetsDiff.class.getClassLoader().getResourceAsStream(filename2);
             ois = new ObjectInputStream(fin);
             Map<Integer, Integer> nonTargetMap2 = (Map<Integer, Integer>) ois.readObject();
 
@@ -29,12 +26,12 @@ public class NonTargetsDiff {
                 int nonTargetCount1 = nonTargetMap1.get(v);
                 int nonTargetCount2 = nonTargetMap2.get(v);
                 if (nonTargetCount1 > nonTargetCount2) {
-                    //  logger.debug("NonTargets count for 1 > 2 " + nonTargetCount1 + " : " + nonTargetCount2);
+                     // logger.debug("NonTargets count for 1 > 2 " + nonTargetCount1 + " : " + nonTargetCount2);
                 } else if (nonTargetCount2 > nonTargetCount1) {
-                    if (nonTargetCount2 > 2)
-                        logger.debug("NonTargets count for 1 < 2 " + nonTargetCount1 + " : " + nonTargetCount2);
+                  //  if (nonTargetCount2 > 2)
+                       logger.info("NonTargets count for 1 < 2 " + nonTargetCount1 + " : " + nonTargetCount2);
                 } else {
-                    //logger.debug("NonTargets count for 1 = 2 " + nonTargetCount1 + " : " + nonTargetCount2);
+                    // logger.debug("NonTargets count for 1 = 2 " + nonTargetCount1 + " : " + nonTargetCount2);
                 }
             }
 
@@ -50,6 +47,6 @@ public class NonTargetsDiff {
 
     public static void main(String[] args) {
         NonTargetsDiff diff = new NonTargetsDiff();
-        diff.printDiff("d2f6a361-0441-4cd9-ab49-782ff4fff1c4-non-targets-map.data", "878beea6-941d-4e79-9de0-da7fafba7061-non-targets-map.data");
+        diff.printDiff("results\\ca-GrQc-80-05-greedy.data", "results\\ca-GrQc-80-05-DAG.data");
     }
 }
