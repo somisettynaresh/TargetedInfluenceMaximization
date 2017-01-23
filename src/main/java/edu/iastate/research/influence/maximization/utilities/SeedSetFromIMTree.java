@@ -15,20 +15,20 @@ public class SeedSetFromIMTree {
     static IMTreeNode maxLeaf = null;
     static int currentSum = 0;
 
-    public void maxSum(IMTreeNode root, int sum) {
-        if (root != null) {
+    public void maxSum(IMTreeNode root, int sum, int budget, int depth) {
+        if (root != null || depth > budget) {
             sum = sum + root.getActiveTargets();
-            if (sum > maxSum && root.getChildren().size() == 0) {
+            if (sum > maxSum && root.getChildren().size() == 0 || depth == budget) {
                 maxLeaf = root;
                 maxSum = sum;
             }
             for (IMTreeNode childNode : root.getChildren()) {
-                maxSum(childNode, sum);
+                maxSum(childNode, sum, budget, depth + 1);
             }
         }
     }
 
-     Set<Integer> findSeedSetInPath(IMTreeNode current) {
+    Set<Integer> findSeedSetInPath(IMTreeNode current) {
         Set<Integer> nodesInPath = new HashSet<>();
         while (current.getParent() != null) {
             if (current.getNode() != -1) {
@@ -40,7 +40,7 @@ public class SeedSetFromIMTree {
     }
 
     public Set<Integer> findSeedSetFromPath(IMTree maxInfluenceTree, int budget) {
-        maxSum(maxInfluenceTree.getRoot(), 0);
+        maxSum(maxInfluenceTree.getRoot(), 0, budget, 0);
         return findSeedSetInPath(maxLeaf);
     }
 

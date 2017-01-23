@@ -26,10 +26,10 @@ public class NonTargetsDiff {
                 int nonTargetCount1 = nonTargetMap1.get(v);
                 int nonTargetCount2 = nonTargetMap2.get(v);
                 if (nonTargetCount1 > nonTargetCount2) {
-                     // logger.debug("NonTargets count for 1 > 2 " + nonTargetCount1 + " : " + nonTargetCount2);
+                      logger.debug("NonTargets count for 1 > 2 " + nonTargetCount1 + " : " + nonTargetCount2);
                 } else if (nonTargetCount2 > nonTargetCount1) {
                   //  if (nonTargetCount2 > 2)
-                       logger.info("NonTargets count for 1 < 2 " + nonTargetCount1 + " : " + nonTargetCount2);
+                     //  logger.info("NonTargets count for 1 < 2 " + nonTargetCount1 + " : " + nonTargetCount2);
                 } else {
                     // logger.debug("NonTargets count for 1 = 2 " + nonTargetCount1 + " : " + nonTargetCount2);
                 }
@@ -47,6 +47,6 @@ public class NonTargetsDiff {
 
     public static void main(String[] args) {
         NonTargetsDiff diff = new NonTargetsDiff();
-        diff.printDiff("results\\ca-GrQc-80-05-greedy.data", "results\\ca-GrQc-80-05-DAG.data");
+        diff.printDiff("results\\ca-GrQc-60-05-Greedy.data", "results\\ca-GrQc-60-05-DAG.data");
     }
 }

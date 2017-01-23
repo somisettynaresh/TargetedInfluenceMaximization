@@ -71,12 +71,14 @@ public class Simulator {
         Set<Integer> seedSet = greedy.findSeedSet(graphWith90PerA,budget,targetLabels,10000);
         logger.info("Influence spread : " + greedy.influenceSpread(graphWith90PerA,seedSet,targetLabels, 10000));
 */
+/*
 
-    /*    EstimateNonTargets edag = new EstimateNonTargetsUsingGreedy();
+        EstimateNonTargets edag = new EstimateNonTargetsUsingGreedy();
         edag.estimate(graphWith90PerA,nonTargetLabels,10000);
 */
-        IMWithTargetLabels im = new IMTRandomDAGEstimatorAndGreedyInfluential();
-        Set<Integer> seedSet = im.findSeedSet(graphWith90PerA, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 10000, nonTargetsEstimateFilename);
+
+        IMWithTargetLabels im = new IMTRandomDAGEstimatorAndDegreeDiscount();
+        Set<Integer> seedSet = im.findSeedSet(graphWith90PerA, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 100, nonTargetsEstimateFilename);
         for (Integer integer : seedSet) {
             logger.info("Seed : " + integer);
         }
