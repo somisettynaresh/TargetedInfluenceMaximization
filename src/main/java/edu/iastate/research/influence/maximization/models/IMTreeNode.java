@@ -1,6 +1,7 @@
 package edu.iastate.research.influence.maximization.models;
 
 import java.io.Serializable;
+import java.util.PriorityQueue;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -12,6 +13,26 @@ public class IMTreeNode implements Serializable{
     private int activeTargets;
     private int activeNonTargets;
     private IMTreeNode parent;
+
+    /**
+     * Getter for property 'queue'.
+     *
+     * @return Value for property 'queue'.
+     */
+    public PriorityQueue<CELFNodeWithNonTarget> getQueue() {
+        return queue;
+    }
+
+    /**
+     * Setter for property 'queue'.
+     *
+     * @param queue Value to set for property 'queue'.
+     */
+    public void setQueue(PriorityQueue<CELFNodeWithNonTarget> queue) {
+        this.queue = queue;
+    }
+
+    private PriorityQueue<CELFNodeWithNonTarget> queue;
     private SortedSet<IMTreeNode> children = new TreeSet<>(new IMTNodeComparator());
 
     /**

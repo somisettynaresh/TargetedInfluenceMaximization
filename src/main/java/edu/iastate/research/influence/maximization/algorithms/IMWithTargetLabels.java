@@ -31,6 +31,8 @@ public abstract class IMWithTargetLabels {
 
     public IMTree maxInfluenceTree;
 
+    public Map<Integer, Set<Integer>> nonTargetsEstimateMap;
+
     public abstract Map<Integer, Integer> estimateNonTargetsByNode(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations);
 
     public Map<Integer, Set<Integer>> estimateNonTargets(DirectedGraph graph, Set<String> nonTargetLabels, int noOfSimulations) {
@@ -55,7 +57,7 @@ public abstract class IMWithTargetLabels {
 
     public abstract NodeWithInfluence findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations);
 
-    public Set<Integer> findSeedSet(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename) {
+    public Set<Integer> findSeedSet(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename, String experimentName) {
         int depth = 0;
         maxInfluenceTree = new IMTree();
         IMTreeNode root = maxInfluenceTree.getRoot();
@@ -63,12 +65,12 @@ public abstract class IMWithTargetLabels {
         Queue<IMTreeNode> firstQueue = new LinkedList<>();
         Queue<IMTreeNode> secondQueue = new LinkedList<>();
         firstQueue.add(root);
-        Map<Integer, Set<Integer>> nonTargetsEstimateMap;
         if (nonTargetsEstimateFilename != "") {
             nonTargetsEstimateMap = estimateNonTargetsFromFile(nonTargetsEstimateFilename);
         } else {
             nonTargetsEstimateMap = estimateNonTargets(graph, nonTargetLabels, noOfSimulations);
         }
+        init(graph, targetLabels, noOfSimulations);
         while (!((firstQueue.isEmpty() && secondQueue.isEmpty()) || depth >= budget)) {
 
             if (!firstQueue.isEmpty()) {
@@ -89,10 +91,14 @@ public abstract class IMWithTargetLabels {
             }
         }
         logger.info("IMTTree is created");
-        String treeFile = "influence-tree" + UUID.randomUUID().toString() + ".data";
+        String treeFile = "tree" + experimentName + ".data";
         WriteObject.writeToFile(maxInfluenceTree, treeFile);
         logger.info("Influence Maximization Tree :" + treeFile);
         return new SeedSetFromIMTree().findSeedSetFromPath(maxInfluenceTree, budget);
+    }
+
+    public void init(DirectedGraph graph, Set<String> targetLabels, int noOfSimulations) {
+
     }
 
     void processTreeLevel(DirectedGraph graph, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, Queue<IMTreeNode> firstQueue, Queue<IMTreeNode> secondQueue, Map<Integer, Set<Integer>> nonTargetsEstimateMap, int noOfSimulations) {

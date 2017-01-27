@@ -6,6 +6,7 @@ import edu.iastate.research.graph.utilities.FileDataReader;
 import edu.iastate.research.graph.utilities.ReadLabelsFromFile;
 import edu.iastate.research.influence.maximization.algorithms.*;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
+import edu.iastate.research.influence.maximization.models.IMTStrategy;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -34,9 +35,12 @@ public class Simulator {
         int budget = sc.nextInt();
         System.out.println("Enter non target threshold");
         int nonTargetThreshold = sc.nextInt();
+        System.out.println("Enter the NonTargetsEstimate filename");
         String nonTargetsEstimateFilename = sc.next();
-        setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + System.currentTimeMillis() + ".log");
-        wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename);
+        System.out.println("Enter the Influence Maximization Strategy (1-6)");
+        int strategy = sc.nextInt();
+        setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
+        wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
     }
 
     private static void setupLogger(String logFileName) {
@@ -53,8 +57,9 @@ public class Simulator {
         PropertyConfigurator.configure(props);
     }
 
-    private static void wikiGraphDifferentComobination(String filename, float probability, int percent, int budget, int nonTargetThreshold, String nonTargetsEstimateFilename) {
+    private static void wikiGraphDifferentComobination(String filename, float probability, int percent, int budget, int nonTargetThreshold, String nonTargetsEstimateFilename, int strategy) {
 
+        String experimentName = filename.split(".txt")[0] + "_" + probability + "_" + percent + "%A_" + budget + "_" + nonTargetThreshold + "_" + nonTargetsEstimateFilename.split(".data")[0].replace('\\', '_') + "_" + strategy;
         FileDataReader wikiVoteDataReader = new FileDataReader(filename, probability);
 
         Set<String> targetLabels = new HashSet<>();
@@ -77,9 +82,12 @@ public class Simulator {
         edag.estimate(graphWith90PerA,nonTargetLabels,10000);
 */
 
-        IMWithTargetLabels im = new IMTRandomDAGEstimatorAndDegreeDiscount();
-        Set<Integer> seedSet = im.findSeedSet(graphWith90PerA, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 100, nonTargetsEstimateFilename);
-        for (Integer integer : seedSet) {
+        IMWithTargetLabels im = IMTInstanceByStrategy.getInstance(IMTStrategy.byValue(strategy));
+        Set<Integer> seedSet = im.findSeedSet(graphWith90PerA, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 10000, nonTargetsEstimateFilename, experimentName);
+
+       /* CELFGreedy greedy = new CELFGreedy();
+        Set<Integer> seedSet = greedy.findSeedSet(graphWith90PerA,5,targetLabels,10000);
+       */ for (Integer integer : seedSet) {
             logger.info("Seed : " + integer);
         }
         Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graphWith90PerA, seedSet, 10000, new HashSet<>());
@@ -136,7 +144,7 @@ public class Simulator {
 
     private static DirectedGraph generateGraph(FileDataReader wikiVoteDataReader, float aPercentage, String graphFileName) {
         DirectedGraph graph = wikiVoteDataReader.createGraphFromData();
-        return new ReadLabelsFromFile().read(graph,graphFileName + "_" + aPercentage + "_labels.txt");
+        return new ReadLabelsFromFile().read(graph, graphFileName + "_" + aPercentage + "_labels.txt");
     }
 
 
