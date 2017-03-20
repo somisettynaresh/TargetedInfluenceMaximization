@@ -3,6 +3,7 @@ package edu.iastate.research.influence.maximization.algorithms;
 import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +18,7 @@ public class IMTGreedyEstimatorAndDegreeDiscount extends IMWithTargetLabelsWithP
     }
 
     @Override
-    public NodeWithInfluence findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
         return new MaxTargetInfluentialNodeWithDegreeDiscount().find(graph, nodes, seedSet, targetLabels, noOfSimulations);
     }
 }

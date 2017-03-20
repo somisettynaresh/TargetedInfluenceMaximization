@@ -31,6 +31,7 @@ public class ReadNonTargetsEstimationFromFile {
                 mapByNonTargetsCount.put(nonTargetCount, nodesWithNonTargetCount);
             }
             for (Integer nonTargetCount : mapByNonTargetsCount.keySet()) {
+                logger.info("Vertices with non targets Estimate " + nonTargetCount + " is " + mapByNonTargetsCount.get(nonTargetCount).size());
                 StringBuilder sb = new StringBuilder();
                 for (Integer v : mapByNonTargetsCount.get(nonTargetCount)) {
                     sb.append(v + " , ");
@@ -51,6 +52,6 @@ public class ReadNonTargetsEstimationFromFile {
 
     public static void main(String[] args) {
         ReadNonTargetsEstimationFromFile reader = new ReadNonTargetsEstimationFromFile();
-        reader.read("af7a21c2-4f63-4042-9d1d-c6562641300f-non-targets-map.data");
+        reader.read("results\\e2d06a34-bada-4e28-98e0-036b7d27cf1c-non-targets-map.data");
     }
 }

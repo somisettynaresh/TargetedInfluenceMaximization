@@ -19,7 +19,7 @@ public class IndependentCascadeModel {
         Map<Integer, Integer> activatedNodeFrequencyMap = new HashMap<>();
         int totalActiveSetSize = 0;
         for (int i = 0; i < noOfSimulations; i++) {
-            Set<Integer> activeSet = singleDiffusion(graph, seedSet, new HashSet<>());
+            Set<Integer> activeSet = singleDiffusion(graph, seedSet,alreadyActivated);
             totalActiveSetSize += activeSet.size();
             for (Integer vertex : activeSet) {
                 int currentFrequency = 0;

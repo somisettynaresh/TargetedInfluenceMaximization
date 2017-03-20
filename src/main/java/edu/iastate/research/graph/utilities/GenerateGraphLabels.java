@@ -32,7 +32,7 @@ public class GenerateGraphLabels {
 
     public static void main(String[] args) {
         GenerateGraphLabels generateGraphLabels = new GenerateGraphLabels();
-        generateGraphLabels.generateLabels("CA-HepPh.txt",0.80f);
+        generateGraphLabels.generateLabels("DBLP.txt",0.8f);
     }
 
 }

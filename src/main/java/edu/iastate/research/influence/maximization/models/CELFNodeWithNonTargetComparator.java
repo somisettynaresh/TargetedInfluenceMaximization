@@ -22,7 +22,8 @@ public class CELFNodeWithNonTargetComparator implements Comparator<CELFNodeWithN
             double randomValue = 50 * r.nextDouble();
             queue.add(new CELFNodeWithNonTarget(i, randomValue, 0));
         }
-
-        System.out.println(queue.remove().getNode());
+        while (!queue.isEmpty()) {
+            System.out.println(queue.remove().getMarginalGain());
+        }
     }
 }

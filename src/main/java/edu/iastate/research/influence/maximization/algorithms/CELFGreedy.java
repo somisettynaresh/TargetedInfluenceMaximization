@@ -46,6 +46,7 @@ public class CELFGreedy {
 
             } else {
                 seedSet.add(top.getNode());
+                logger.info("Updating Queue with node after performing diffusion : " + top.getNode());
                 int marginalGain = countTargets(performDiffusion(graph, seedSet, noOfSimulations, prevActivatedSet), graph, targetLabels) - prevMG;
                 seedSet.remove(top.getNode());
                 queue.remove(top);

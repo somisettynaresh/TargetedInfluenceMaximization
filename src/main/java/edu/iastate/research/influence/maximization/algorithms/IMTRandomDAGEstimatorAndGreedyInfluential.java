@@ -5,6 +5,7 @@ import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeM
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class IMTRandomDAGEstimatorAndGreedyInfluential extends IMWithTargetLabel
     }
 
     @Override
-    public NodeWithInfluence findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
         return new MaxTargetInfluentialNodeUsingGreedy().find(graph, nodes, seedSet, targetLabels, noOfSimulations);
     }
 }

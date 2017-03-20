@@ -55,7 +55,7 @@ public abstract class IMWithTargetLabels {
     }
 
 
-    public abstract NodeWithInfluence findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations);
+    public abstract List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations);
 
     public Set<Integer> findSeedSet(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename, String experimentName) {
         int depth = 0;
@@ -91,7 +91,7 @@ public abstract class IMWithTargetLabels {
             }
         }
         logger.info("IMTTree is created");
-        String treeFile = "tree" + experimentName + ".data";
+        String treeFile = "tree-" + experimentName + new Random().nextInt() + ".data";
         WriteObject.writeToFile(maxInfluenceTree, treeFile);
         logger.info("Influence Maximization Tree :" + treeFile);
         return new SeedSetFromIMTree().findSeedSetFromPath(maxInfluenceTree, budget);
@@ -113,12 +113,12 @@ public abstract class IMWithTargetLabels {
             for (int i = 0; i <= nonTargetThreshold - currentNonThresholdCount; i++) {
                 if (nonTargetsEstimateMap.containsKey(i)) {
                     logger.debug("Finding best child node for non target count " + i);
-                    NodeWithInfluence maxInfluentialNode = findMaxInfluentialNode(graph, nonTargetsEstimateMap.get(i), seedSetInPath, targetLabels, noOfSimulations);
-                    IMTreeNode childNode = new IMTreeNode(maxInfluentialNode, i, current);
-                    logger.debug("Adding child node " + childNode.getNode() + " with Target influence Spread " + childNode.getActiveTargets() + " non Targets : " + childNode.getActiveNonTargets());
-                    current.addChild(childNode);
-                    firstQueue.add(childNode);
-
+                    for (NodeWithInfluence maxInfluentialNode : findMaxInfluentialNode(graph, nonTargetsEstimateMap.get(i), seedSetInPath, targetLabels, noOfSimulations)) {
+                        IMTreeNode childNode = new IMTreeNode(maxInfluentialNode, i, current);
+                        logger.debug("Adding child node " + childNode.getNode() + " with Target influence Spread " + childNode.getActiveTargets() + " non Targets : " + childNode.getActiveNonTargets());
+                        current.addChild(childNode);
+                        firstQueue.add(childNode);
+                    }
                 }
             }
         }
@@ -146,8 +146,8 @@ public abstract class IMWithTargetLabels {
         return nonTargetsActivated;
     }
 
-    static Integer countTargetsActivatedInPath(IMTreeNode current) {
-        int targetsActivated = 0;
+    static Double countTargetsActivatedInPath(IMTreeNode current) {
+        double targetsActivated = 0;
         while (current.getParent() != null) {
             if (current.getNode() != -1) {
                 targetsActivated += current.getActiveTargets();

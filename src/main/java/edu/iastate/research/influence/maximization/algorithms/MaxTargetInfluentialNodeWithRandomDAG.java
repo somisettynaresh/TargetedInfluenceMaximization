@@ -28,7 +28,7 @@ public class MaxTargetInfluentialNodeWithRandomDAG extends MaxTargetInfluentialN
         Map<Integer, Integer> aggregateSizeOfReachableTargets = new HashMap<>();
         for (int i = 0; i < noOfSimulations; i++) {
             DirectedGraph dag = createDAG(graph);
-            logger.debug("Created DAG - " + i);
+            logger.info("Created DAG - " + i);
             processDAG(dag, targetLabels, aggregateReachableSetInDag, aggregateSizeOfReachableTargets);
             logger.debug("Processed DAG - " + i);
         }
@@ -69,8 +69,10 @@ public class MaxTargetInfluentialNodeWithRandomDAG extends MaxTargetInfluentialN
             }
             reachableCache.put(v.getId(), reachableSet);
             Map<Integer, Integer> aggregateReachableNodesForNode = new HashMap<>();
+            int reachableNodesCount = 0;
             for (Integer reachableNode : reachableSet) {
                 if (dag.find(reachableNode).hasLabel(targetLabels)) {
+                    reachableNodesCount++;
                     if (aggregateReachableSetInDag.containsKey(v.getId())) {
                         aggregateReachableNodesForNode = aggregateReachableSetInDag.get(v.getId());
                     }
@@ -87,7 +89,7 @@ public class MaxTargetInfluentialNodeWithRandomDAG extends MaxTargetInfluentialN
                 if (aggregateSizeOfReachableTargets.containsKey(v.getId())) {
                     aggregateReachableSetSize = aggregateSizeOfReachableTargets.get(v.getId());
                 }
-                aggregateReachableSetSize += aggregateReachableNodesForNode.size();
+                aggregateReachableSetSize += reachableNodesCount;
                 aggregateSizeOfReachableTargets.put(v.getId(), aggregateReachableSetSize);
         }
 
@@ -101,7 +103,7 @@ public class MaxTargetInfluentialNodeWithRandomDAG extends MaxTargetInfluentialN
     }
 
     @Override
-    public NodeWithInfluence find(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> find(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
         int maxMarginalInfluenceSpread = Integer.MIN_VALUE;
         int maxInfluentialNode = Integer.MIN_VALUE;
         Set<Integer> reachableTargetNodesWithSeedSet = new HashSet<>();
@@ -120,7 +122,9 @@ public class MaxTargetInfluentialNodeWithRandomDAG extends MaxTargetInfluentialN
             }
         }
         logger.debug("Maximum influential Node is " + maxInfluentialNode + " and influence is " + maxMarginalInfluenceSpread);
-        return new NodeWithInfluence(maxInfluentialNode, maxMarginalInfluenceSpread);
+        List<NodeWithInfluence> nodeWithMaxInfluence = new ArrayList<>();
+        nodeWithMaxInfluence.add(new NodeWithInfluence(maxInfluentialNode, maxMarginalInfluenceSpread));
+        return nodeWithMaxInfluence;
     }
 
     private int calculateMarginalInfluence(Set<Integer> reachableTargetNodesWithSeedSet, Set<Integer> reachableTargetsFromNode) {

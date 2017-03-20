@@ -10,7 +10,7 @@ import java.util.TreeSet;
  */
 public class IMTreeNode implements Serializable{
     private int node;
-    private int activeTargets;
+    private double activeTargets;
     private int activeNonTargets;
     private IMTreeNode parent;
 
@@ -70,7 +70,7 @@ public class IMTreeNode implements Serializable{
     public IMTreeNode(NodeWithInfluence maxInfluentialNode, int nonTargetsActivated, IMTreeNode parent) {
         this.node = maxInfluentialNode.getNode();
         this.activeNonTargets = nonTargetsActivated;
-        this.activeTargets = ((Double)maxInfluentialNode.getInfluence()).intValue();
+        this.activeTargets = maxInfluentialNode.getInfluence();
         this.parent = parent;
     }
 
@@ -97,7 +97,7 @@ public class IMTreeNode implements Serializable{
      *
      * @return Value for property 'activeTargets'.
      */
-    public int getActiveTargets() {
+    public double getActiveTargets() {
         return activeTargets;
     }
 
@@ -106,7 +106,7 @@ public class IMTreeNode implements Serializable{
      *
      * @param activeTargets Value to set for property 'activeTargets'.
      */
-    public void setActiveTargets(int activeTargets) {
+    public void setActiveTargets(double activeTargets) {
         this.activeTargets = activeTargets;
     }
 

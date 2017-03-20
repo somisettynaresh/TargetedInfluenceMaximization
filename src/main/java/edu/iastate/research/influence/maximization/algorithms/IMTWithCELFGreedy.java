@@ -19,7 +19,7 @@ public class IMTWithCELFGreedy extends IMWithTargetLabels {
     }
 
     @Override
-    public NodeWithInfluence findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
+    public List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations) {
         return null;
     }
 
@@ -66,19 +66,19 @@ public class IMTWithCELFGreedy extends IMWithTargetLabels {
             logger.debug("Processing TreeNode " + current.getNode());
             Set<Integer> seedSetInPath = findSeedSetInPath(current);
             int currentNonThresholdCount = countNonTargetsActivatedInPath(current);
-            int currentTargetsActivated = countTargetsActivatedInPath(current);
+            double currentTargetsActivated = countTargetsActivatedInPath(current);
             Set<Integer> prevActivatedSet = performDiffusion(graph, seedSetInPath, noOfSimulations, new HashSet<>());
             //logger.info("Total NonActive nodes till this tree node "+ currentNonThresholdCount);
             Predicate<CELFNodeWithNonTarget> celfNodePredicate = p -> prevActivatedSet.contains(p.getNode());
             PriorityQueue<CELFNodeWithNonTarget> queue = current.getQueue();
             queue.removeIf(celfNodePredicate);
             for (int i = 0; i <= nonTargetThreshold - currentNonThresholdCount; i++) {
-                IMTreeNode childNode = findMaxChildNode(graph, targetLabels, seedSetInPath, current, i, prevActivatedSet, noOfSimulations);
+                IMTreeNode childNode = findMaxChildNode(graph, targetLabels, seedSetInPath, maxInfluenceTree.getRoot().getQueue(), i, prevActivatedSet, noOfSimulations, current);
                 if (childNode != null) {
                     if (maxTreeChildNodeByNotTargetCount.containsKey(currentNonThresholdCount + i)) {
-                        int currentMax = maxTreeChildNodeByNotTargetCount.get(currentNonThresholdCount + i).getActiveTargets() +
+                        double currentMax = maxTreeChildNodeByNotTargetCount.get(currentNonThresholdCount + i).getActiveTargets() +
                                 countTargetsActivatedInPath(maxTreeChildNodeByNotTargetCount.get(currentNonThresholdCount + i).getParent());
-                        if (currentTargetsActivated + childNode.getActiveTargets() > currentMax) {
+                        if (currentTargetsActivated + childNode.getActiveTargets() >= currentMax) {
                             maxTreeChildNodeByNotTargetCount.put(currentNonThresholdCount + i, childNode);
                         }
                     } else {
@@ -89,15 +89,15 @@ public class IMTWithCELFGreedy extends IMWithTargetLabels {
         }
         for (IMTreeNode childNode : maxTreeChildNodeByNotTargetCount.values()) {
             IMTreeNode parent = childNode.getParent();
-            logger.debug("Adding child node " + childNode.getNode() + " with Target influence Spread " + childNode.getActiveTargets() + " non Targets : " + childNode.getActiveNonTargets());
+            logger.info("Adding child node " + childNode.getNode() + " with Target influence Spread " + childNode.getActiveTargets() + " non Targets : " + childNode.getActiveNonTargets());
             parent.addChild(childNode);
             firstQueue.add(childNode);
         }
     }
 
-    private IMTreeNode findMaxChildNode(DirectedGraph graph, Set<String> targetLabels, Set<Integer> seedSet, IMTreeNode current, int nontTargetsCount, final Set<Integer> prevActivatedSet, int noOfSimulations) {
+    private IMTreeNode findMaxChildNode(DirectedGraph graph, Set<String> targetLabels, Set<Integer> seedSet, final PriorityQueue<CELFNodeWithNonTarget> parentQueue, int nontTargetsCount, final Set<Integer> prevActivatedSet, int noOfSimulations, final IMTreeNode parentNode) {
         boolean isMaxInfluentialChildFound = false;
-        PriorityQueue<CELFNodeWithNonTarget> currentQueue = clone(current.getQueue());
+        PriorityQueue<CELFNodeWithNonTarget> currentQueue = clone(parentQueue);
         PriorityQueue<CELFNodeWithNonTarget> queue = filterQueueByNonTargetsCount(currentQueue, nontTargetsCount);
         Set<Integer> currentlyActivated = new HashSet<>();
         IMTreeNode maxInfluentialChildNode = null;
@@ -106,18 +106,25 @@ public class IMTWithCELFGreedy extends IMWithTargetLabels {
         }
         while (!isMaxInfluentialChildFound && !queue.isEmpty()) {
             CELFNodeWithNonTarget top = queue.peek();
-            if (top.getFlag() == seedSet.size() && top.getEstimatedActivateNontargets() == nontTargetsCount) {
-                logger.info("Added node " + top.getNode() + " to seed set");
+            while(seedSet.contains(top.getNode())) {
                 queue.remove();
-                maxInfluentialChildNode = new IMTreeNode(top.getNode(), (int) Math.round(top.getMarginalGain()), nontTargetsCount, current);
+                top = queue.peek();
+            }
+            if (top.getFlag() == seedSet.size() && top.getEstimatedActivateNontargets() == nontTargetsCount) {
+                logger.info("Already Activated count for the tree node " + parentNode.getNode() + " is " + prevActivatedSet.size());
+                logger.info("Added node " + top.getNode() + " to seed set with spread " + top.getMarginalGain() );
+                queue.remove();
+                maxInfluentialChildNode = new IMTreeNode(top.getNode(), (int) Math.round(top.getMarginalGain()), nontTargetsCount, parentNode);
                 isMaxInfluentialChildFound = true;
 
             } else {
                 seedSet.add(top.getNode());
-                logger.info("Updating Queue with node after performing diffusion : " + top.getNode());
-                currentlyActivated = performDiffusion(graph, seedSet, noOfSimulations, prevActivatedSet);
-                currentlyActivated.removeAll(prevActivatedSet);
-                int marginalGain = countTargets(currentlyActivated, graph, targetLabels);
+                currentlyActivated = performDiffusion(graph, seedSet, noOfSimulations, new HashSet<>());
+                //currentlyActivated.removeAll(prevActivatedSet);
+                double marginalGain = countTargets(currentlyActivated, graph, targetLabels)
+                        - countTargets(prevActivatedSet, graph, targetLabels);
+                logger.info("Updating Queue with node after performing diffusion : " + top.getNode()
+                        +"from " + top.getMarginalGain() +" to :" + marginalGain);
                 seedSet.remove(top.getNode());
                 queue.remove(top);
                 top.setFlag(seedSet.size());
@@ -127,13 +134,14 @@ public class IMTWithCELFGreedy extends IMWithTargetLabels {
         }
         queue.addAll(currentQueue);
         maxInfluentialChildNode.setQueue(queue);
+        parentNode.setQueue(queue);
         return maxInfluentialChildNode;
     }
 
     private PriorityQueue<CELFNodeWithNonTarget> clone(PriorityQueue<CELFNodeWithNonTarget> queue) {
         PriorityQueue<CELFNodeWithNonTarget> clonedQueue = new PriorityQueue<>(new CELFNodeWithNonTargetComparator());
         for (CELFNodeWithNonTarget celfNodeWithNonTarget : queue) {
-            clonedQueue.add(celfNodeWithNonTarget);
+            clonedQueue.add(new CELFNodeWithNonTarget(celfNodeWithNonTarget.getNode(),celfNodeWithNonTarget.getMarginalGain(),celfNodeWithNonTarget.getFlag(), celfNodeWithNonTarget.getEstimatedActivateNontargets()));
         }
         return clonedQueue;
     }
