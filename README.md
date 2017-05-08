@@ -180,7 +180,22 @@ EstimateNonTargets edag = new EstimateNonTargetsUsingRandomDAG();
 edag.estimate(graph, nonTargetLabels, 10000);
 ```
               
+### <a name="ctim-phase-2"> </a> Phase 2 Constructing the IMTree :
+The following are the various Influence Maximization Stratagies 
+```
+EstimateNonTargets egreedy = new EstimateNonTargetsUsingGreedy();
+egreedy.estimate(graph, nonTargetLabels, 10000);
 
+```
+GREEDY_ESTIMATOR_AND_GREEDY_INFLUENTIAL(1),
+GREEDY_ESTIMATOR_AND_DEGREE_DISCOUNT_INFLUENTIAL(2),
+GREEDY_ESTIMATOR_AND_RANDOM_DAG_INFLUENTIAL(3),
+GREEDY_ESTIMATOR_AND_CELF_INFLUENTIAL(4),
+RANDOM_DAG_ESTIMATOR_AND_GREEDY_INFLUENTIAL(5),
+RANDOM_DAG_ESTIMATOR_AND_DEGREE_DISCOUNT_INFLUENTIAL(6),
+RANDOM_DAG_ESTIMATOR_AND_RANDOM_DAG_INFLUENTIAL(7),
+RANDOM_DAG_ESTIMATOR_AND_CELF_INFLUENTIAL(8);
+```
 
 
 
