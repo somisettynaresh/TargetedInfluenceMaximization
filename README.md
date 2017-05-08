@@ -27,7 +27,15 @@ which maximizes the influence over the targets and keeps the influence over the 
     * [Greedy](#im-greedy)
     * [CELF Greedy](#im-celf)
     * [Degree Discount](#im-dd)
-  
+ * [Algorithms for CTIM problem](#algos-ctim)
+    * [Baseline Greedy](#ctim-baseline-greedy)
+    * [DAG Baseline Greedy](#ctim-dag-baseline)
+    * [Two Phase Algorithm](#ctim-two-phase)
+         * [Phase 1- Estimating Non Targets](#ctim-phase1)
+              * [Estimating Non-Targets Using Simulation](#ctim-phase1-simulation)
+              * [Estimating Non-Targets Using DAG](#ctim-phase1-dag)
+              
+ 
 
 
  ### <a name="modules"> </a> Modules
@@ -118,6 +126,62 @@ Given a graph, budget, target labels (make every label as target labels to ignor
 DegreeDiscount dd = new DegreeDiscount();
 Set<Integer> seedSet = dd.findSeedSet(graph, budget, targetLabels);
 ```
+## <a name="algos-ctim"> </a> Algorithms for CTIM problem :
+This sections consists of various implementations of constrained targeted influence maximization algorithms.
+
+### <a name="ctim-baseline-greedy"> </a> Baseline Greedy :
+Given a graph, budget, nonTargetThreshold, target labels , non target labels and number of simulations, baseline greedy algorithm outputs the seed set.
+```
+NaiveGreedy greedy = new NaiveGreedy();
+Set<Integer> seedSet = greedy.findSeedSet(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, noOfSimulations);
+```
+### <a name="ctim-dag-baseline"> </a> DAG Baseline :
+Given a graph, budget, nonTargetThreshold, target labels , non target labels and number of simulations, dag baseline algorithm outputs the seed set.
+```
+DAGBaselineGreedy dagBaseline = new DAGBaselineGreedy();
+Set<Integer> seedSet = dagBaseline.findSeedSet(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, noOfSimulations);
+```
+### <a name="ctim-two-phase"> </a> Two Phase Implementation for CTIM :
+Simlulator is the main class for simulating the two phase implementation for the ctim problem. When you execute the Simulator.java , it takes the following as the input
+
+```
+Enter Graph File Name
+ca-GrQc.txt
+Enter the propagation probability
+0.05
+Enter percentage of A's to be in Graph
+80
+Enter budget of seed set
+20
+Enter non target threshold
+10
+Enter the NonTargetsEstimate filename
+results\ca-GrQc-data.dat
+Enter the Influence Maximization Strategy (1-6)
+1
+```
+Based on the input of Influence Maximization Strategy, simulator runs the corresponding implementations of the two phase implementation.
+The Simulator writes the constucted the Influence Maximization Tree in a file for which it prints the filename. For the two phase implementation, we can reuse the result of phase 1 (estimating non-targets) using the parameter NonTargetsEstimate filename in the simulator.
+
+### <a name="ctim-phase1"> </a> Phase 1- Estimating Non Targets:
+This is the implementation of Phase 1. We can generate the estimate file using the following strategies.
+
+#### <a name="ctim-phase1-simulation"> </a> Estimating Non-Targets Using Simulation:
+
+```
+EstimateNonTargets egreedy = new EstimateNonTargetsUsingGreedy();
+egreedy.estimate(graph, nonTargetLabels, 10000);
+
+```
+
+#### <a name="ctim-phase1-dag"> </a>Estimating Non-Targets Using DAG:
+```
+EstimateNonTargets edag = new EstimateNonTargetsUsingRandomDAG();
+edag.estimate(graph, nonTargetLabels, 10000);
+```
+              
+
+
 
 
 
