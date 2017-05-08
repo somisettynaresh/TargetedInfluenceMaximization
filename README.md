@@ -182,9 +182,6 @@ edag.estimate(graph, nonTargetLabels, 10000);
               
 ### <a name="ctim-phase-2"> </a> Phase 2 Constructing the IMTree :
 The following are the various Influence Maximization Stratagies 
-```
-EstimateNonTargets egreedy = new EstimateNonTargetsUsingGreedy();
-egreedy.estimate(graph, nonTargetLabels, 10000);
 
 ```
 GREEDY_ESTIMATOR_AND_GREEDY_INFLUENTIAL(1),
