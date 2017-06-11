@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TargetedInfluenceMaximization.iml" filepath="$PROJECT_DIR$/TargetedInfluenceMaximization.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TargetedInfluenceMaximization.iml" filepath="$PROJECT_DIR$/.idea/modules/TargetedInfluenceMaximization.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TargetedInfluenceMaximization_main.iml" filepath="$PROJECT_DIR$/.idea/modules/TargetedInfluenceMaximization_main.iml" group="TargetedInfluenceMaximization" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TargetedInfluenceMaximization_test.iml" filepath="$PROJECT_DIR$/.idea/modules/TargetedInfluenceMaximization_test.iml" group="TargetedInfluenceMaximization" />
     </modules>
   </component>
 </project>

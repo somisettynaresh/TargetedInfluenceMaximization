@@ -4,6 +4,7 @@ import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.utilities.WriteObject;
 import edu.iastate.research.influence.maximization.models.IMTree;
 import edu.iastate.research.influence.maximization.models.IMTreeNode;
+import edu.iastate.research.influence.maximization.models.IMTreeSeedSet;
 import edu.iastate.research.influence.maximization.models.NodeWithInfluence;
 import edu.iastate.research.influence.maximization.utilities.ReadNonTargetsEstimationFromFile;
 import edu.iastate.research.influence.maximization.utilities.SeedSetFromIMTree;
@@ -57,7 +58,7 @@ public abstract class IMWithTargetLabels {
 
     public abstract List<NodeWithInfluence> findMaxInfluentialNode(DirectedGraph graph, Set<Integer> nodes, Set<Integer> seedSet, Set<String> targetLabels, int noOfSimulations);
 
-    public Set<Integer> findSeedSet(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename, String experimentName) {
+    public void constructIMTree(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename, String experimentName) {
         int depth = 0;
         maxInfluenceTree = new IMTree();
         IMTreeNode root = maxInfluenceTree.getRoot();
@@ -94,7 +95,16 @@ public abstract class IMWithTargetLabels {
         String treeFile = "tree-" + experimentName + new Random().nextInt() + ".data";
         WriteObject.writeToFile(maxInfluenceTree, treeFile);
         logger.info("Influence Maximization Tree :" + treeFile);
+    }
+
+    public Set<Integer> findSeedSet(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename, String experimentName) {
+        constructIMTree(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, noOfSimulations, nonTargetsEstimateFilename, experimentName);
         return new SeedSetFromIMTree().findSeedSetFromPath(maxInfluenceTree, budget);
+    }
+
+    public List<IMTreeSeedSet> findCandidateSeedSets(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename, String experimentName) {
+        constructIMTree(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, noOfSimulations, nonTargetsEstimateFilename, experimentName);
+        return IMTreeSeedSelector.findSeedSets(graph, maxInfluenceTree, budget, nonTargetThreshold);
     }
 
     public void init(DirectedGraph graph, Set<String> targetLabels, int noOfSimulations) {

@@ -7,6 +7,8 @@ import edu.iastate.research.graph.utilities.ReadLabelsFromFile;
 import edu.iastate.research.influence.maximization.algorithms.*;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
 import edu.iastate.research.influence.maximization.models.IMTStrategy;
+import edu.iastate.research.influence.maximization.models.IMTreeSeedSet;
+import edu.iastate.research.influence.maximization.utilities.DisplaySeedSets;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
@@ -16,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+
 
 /**
  * Created by Naresh on 10/28/2016.
@@ -67,40 +70,38 @@ public class Simulator {
         Set<String> nonTargetLabels = new HashSet<>();
         nonTargetLabels.add("B");
 
-        DirectedGraph graphWith90PerA = generateGraph(wikiVoteDataReader, ((float) percent) / 100, filename);
+        DirectedGraph graph = generateGraph(wikiVoteDataReader, ((float) percent) / 100, filename);
         logger.info("***************** Simulating with" + percent + "% A graph ****************");
-        printGraphStats(graphWith90PerA, targetLabels, nonTargetLabels);
+        printGraphStats(graph, targetLabels, nonTargetLabels);
 
 /*
         Greedy greedy = new GreedyWithMultiThreading();
-        Set<Integer> seedSet = greedy.findSeedSet(graphWith90PerA,budget,targetLabels,10000);
-        logger.info("Influence spread : " + greedy.influenceSpread(graphWith90PerA,seedSet,targetLabels, 10000));
+        Set<Integer> seedSet = greedy.findSeedSet(graph,budget,targetLabels,10000);
+        logger.info("Influence spread : " + greedy.influenceSpread(graph,seedSet,targetLabels, 10000));
 
 
         EstimateNonTargets edag = new EstimateNonTargetsUsingRandomDAG();
-        edag.estimate(graphWith90PerA, nonTargetLabels, 20000);
+        edag.estimate(graph, nonTargetLabels, 20000);
 */
-/*
 
         IMWithTargetLabels im = IMTInstanceByStrategy.getInstance(IMTStrategy.byValue(strategy));
-        Set<Integer> seedSet = im.findSeedSet(graphWith90PerA, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 10000, nonTargetsEstimateFilename, experimentName);
+        List<IMTreeSeedSet> candidateSeedSets = im.findCandidateSeedSets(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 20000, nonTargetsEstimateFilename, experimentName);
+        DisplaySeedSets.printOutput(candidateSeedSets);
+//        Set<Integer> seedSet = im.findSeedSet(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 10000, nonTargetsEstimateFilename, experimentName);
 
 
 
-/*CELFGreedy greedy = new CELFGreedy();
-        Set<Integer> seedSet = greedy.findSeedSet(graphWith90PerA,51,targetLabels,10000);
-*/
+    }
 
-        NaiveGreedy greedy = new NaiveGreedy();
-        Set<Integer> seedSet = greedy.findSeedSet(graphWith90PerA, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 20000);
+    private static void printTargetsActivatedForSeedSet(DirectedGraph graph, Set<Integer> seedSet, Set<String> targetLabels) {
         for (Integer integer : seedSet) {
             logger.info("Seed : " + integer);
         }
-        Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graphWith90PerA, seedSet, 20000, new HashSet<>());
+        Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, 20000, new HashSet<>());
         int targetsCount = 0;
         int nonTargetsCount = 0;
         for (Integer v : activatedSet) {
-            if (graphWith90PerA.find(v).hasLabel(targetLabels)) {
+            if (graph.find(v).hasLabel(targetLabels)) {
                 targetsCount++;
             } else {
                 nonTargetsCount++;
@@ -108,7 +109,6 @@ public class Simulator {
         }
         logger.info("Targets Activated : " + targetsCount);
         logger.info("Non Targets Activated : " + nonTargetsCount);
-
     }
 
     private static void printGraphStats(DirectedGraph graph, Set<String> targetLabels, Set<String> nonTargetLabels) {
