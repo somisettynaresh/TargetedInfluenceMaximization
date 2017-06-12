@@ -29,4 +29,10 @@ public class DisplaySeedSets {
         textTable.printTable();
 
     }
+
+    public static void plotGraph(List<IMTreeSeedSet> seedSetList) {
+        PlotInfluence plotInfluence = new PlotInfluence("Seed Sets Influence", seedSetList);
+        plotInfluence.pack();
+        plotInfluence.setVisible(true);
+    }
 }

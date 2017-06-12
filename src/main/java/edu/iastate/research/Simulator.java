@@ -4,7 +4,8 @@ import edu.iastate.research.graph.models.DirectedGraph;
 import edu.iastate.research.graph.models.Vertex;
 import edu.iastate.research.graph.utilities.FileDataReader;
 import edu.iastate.research.graph.utilities.ReadLabelsFromFile;
-import edu.iastate.research.influence.maximization.algorithms.*;
+import edu.iastate.research.influence.maximization.algorithms.IMTInstanceByStrategy;
+import edu.iastate.research.influence.maximization.algorithms.IMWithTargetLabels;
 import edu.iastate.research.influence.maximization.diffusion.IndependentCascadeModel;
 import edu.iastate.research.influence.maximization.models.IMTStrategy;
 import edu.iastate.research.influence.maximization.models.IMTreeSeedSet;
@@ -13,8 +14,6 @@ import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -88,6 +87,7 @@ public class Simulator {
         List<IMTreeSeedSet> candidateSeedSets = im.findCandidateSeedSets(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 20000, nonTargetsEstimateFilename, experimentName);
         DisplaySeedSets.printOutput(candidateSeedSets);
 //        Set<Integer> seedSet = im.findSeedSet(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, 10000, nonTargetsEstimateFilename, experimentName);
+        DisplaySeedSets.plotGraph(candidateSeedSets);
 
 
 
