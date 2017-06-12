@@ -104,7 +104,7 @@ public abstract class IMWithTargetLabels {
 
     public List<IMTreeSeedSet> findCandidateSeedSets(DirectedGraph graph, int budget, int nonTargetThreshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations, String nonTargetsEstimateFilename, String experimentName) {
         constructIMTree(graph, budget, nonTargetThreshold, targetLabels, nonTargetLabels, noOfSimulations, nonTargetsEstimateFilename, experimentName);
-        return IMTreeSeedSelector.findSeedSets(graph, maxInfluenceTree, budget, nonTargetThreshold);
+        return IMTreeSeedSelector.findSeedSets(graph, maxInfluenceTree, budget, nonTargetThreshold, targetLabels, nonTargetLabels, noOfSimulations);
     }
 
     public void init(DirectedGraph graph, Set<String> targetLabels, int noOfSimulations) {

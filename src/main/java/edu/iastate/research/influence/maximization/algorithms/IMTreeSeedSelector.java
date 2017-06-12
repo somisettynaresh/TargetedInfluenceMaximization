@@ -15,12 +15,7 @@ import static edu.iastate.research.influence.maximization.utilities.SeedSetFromI
  * Created by madhavanrp on 6/7/17.
  */
 public class IMTreeSeedSelector {
-    public static List<IMTreeSeedSet> findSeedSets(DirectedGraph graph, IMTree tree, int budget, int threshold) {
-        //TODO: Change this?
-        Set<String> targetLabels = new HashSet<>();
-        targetLabels.add("A");
-        Set<String> nonTargetLabels = new HashSet<>();
-        nonTargetLabels.add("B");
+    public static List<IMTreeSeedSet> findSeedSets(DirectedGraph graph, IMTree tree, int budget, int threshold, Set<String> targetLabels, Set<String> nonTargetLabels, int noOfSimulations) {
 
         SeedSetFromIMTree seedSetFromIMTree = new SeedSetFromIMTree();
         Queue<IMTreeNode> leafNodes = seedSetFromIMTree.getTreeNodesAtDepth(tree.getRoot(), budget);
@@ -29,8 +24,7 @@ public class IMTreeSeedSelector {
         for(IMTreeNode leaf:leafNodes) {
             IMTreeSeedSet imSeedSet = new IMTreeSeedSet();
             Set<Integer> seedSet = seedSetFromIMTree.findSeedSetInPath(leaf);
-            //TODO: Remove 20000 hard coded
-            Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, 20000, new HashSet<>());
+            Set<Integer> activatedSet = IndependentCascadeModel.performDiffusion(graph, seedSet, noOfSimulations, new HashSet<>());
             int targetsActivated = countTargets(activatedSet, graph, targetLabels);
             int nonTargetsActivated = countTargets(activatedSet, graph, nonTargetLabels);
             imSeedSet.setTargetsActivated(targetsActivated);
