@@ -1,6 +1,6 @@
 apply plugin: 'idea'
 //and standard one
-apply plugin: 'java'
+apply plugin: 'application'
 group 'edu.iastate.research'
 version '1.0-SNAPSHOT'
 
@@ -36,3 +36,10 @@ jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
 }
+run {
+    if (project.hasProperty("appArgs")) {
+        args Eval.me(appArgs)
+    }
+}
+
+mainClassName = 'edu.iastate.research.Simulator'
