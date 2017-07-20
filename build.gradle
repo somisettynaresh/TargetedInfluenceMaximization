@@ -1,6 +1,6 @@
 apply plugin: 'idea'
 //and standard one
-apply plugin: 'java'
+apply plugin: 'application'
 group 'edu.iastate.research'
 version '1.0-SNAPSHOT'
 
@@ -16,11 +16,16 @@ sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    flatDir {
+        dirs 'lib'
+    }
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile group: 'log4j', name: 'log4j', version: '1.2.16'
+    compile group: 'commons-lang', name: 'commons-lang', version: '2.6'
+    compile fileTree(dir: 'lib', include: '*.jar')
 }
 
 jar {
@@ -31,3 +36,10 @@ jar {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 
 }
+run {
+    if (project.hasProperty("appArgs")) {
+        args Eval.me(appArgs)
+    }
+}
+
+mainClassName = 'edu.iastate.research.Simulator'
