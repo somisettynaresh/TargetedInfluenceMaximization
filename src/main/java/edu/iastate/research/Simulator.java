@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.util.*;
 
 
+
 /**
  * Created by Naresh on 10/28/2016.
  */
@@ -26,21 +27,37 @@ public class Simulator {
     final static Logger logger = Logger.getLogger(Simulator.class);
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Enter Graph File Name");
-        String filename = sc.next();
-        System.out.println("Enter the propagation probability");
-        float probability = Float.parseFloat(sc.next());
-        System.out.println("Enter percentage of A's to be in Graph");
-        int percent = sc.nextInt();
-        System.out.println("Enter budget of seed set");
-        int budget = sc.nextInt();
-        System.out.println("Enter non target threshold");
-        int nonTargetThreshold = sc.nextInt();
-        System.out.println("Enter the NonTargetsEstimate filename");
-        String nonTargetsEstimateFilename = sc.next();
-        System.out.println("Enter the Influence Maximization Strategy (1-6)");
-        int strategy = sc.nextInt();
+        if(args!=null && args.length>0) {
+            runWithParameters(args);
+        } else {
+            Scanner sc = new Scanner(System.in);
+            System.out.println("Enter Graph File Name");
+            String filename = sc.next();
+            System.out.println("Enter the propagation probability");
+            float probability = Float.parseFloat(sc.next());
+            System.out.println("Enter percentage of A's to be in Graph");
+            int percent = sc.nextInt();
+            System.out.println("Enter budget of seed set");
+            int budget = sc.nextInt();
+            System.out.println("Enter non target threshold");
+            int nonTargetThreshold = sc.nextInt();
+            System.out.println("Enter the NonTargetsEstimate filename");
+            String nonTargetsEstimateFilename = sc.next();
+            System.out.println("Enter the Influence Maximization Strategy (1-6)");
+            int strategy = sc.nextInt();
+            setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
+            wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
+        }
+    }
+
+    private static void runWithParameters(String[] args) {
+        String filename = args[0];
+        float probability = Float.parseFloat(args[1]);
+        int percent = Integer.valueOf(args[2]);
+        int budget = Integer.valueOf(args[3]);
+        int nonTargetThreshold = Integer.valueOf(args[4]);
+        String nonTargetsEstimateFilename = "";
+        int strategy = Integer.valueOf(args[6]);
         setupLogger(filename + "_" + probability + "_" + percent + "_" + budget + "_" + nonTargetThreshold + "_" + "_" + strategy + "_" + System.currentTimeMillis() + ".log");
         wikiGraphDifferentComobination(filename, probability, percent, budget, nonTargetThreshold, nonTargetsEstimateFilename, strategy);
     }
